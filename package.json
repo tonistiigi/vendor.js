@@ -19,6 +19,6 @@
   , "coffee-script": ">=1.1.1"
   }
 , "engines":
-  { "node": "~v0.4"
+  { "node": "~0.4"
   }
 }
