@@ -1,6 +1,8 @@
 fs = require "fs"
 path = require "path"
 coffee = require "coffee-script"
+request = require "request"
+require "bufferjs"
 
 _queue = (arr, iterator, callback) ->
   return callback() unless arr.length
@@ -8,7 +10,15 @@ _queue = (arr, iterator, callback) ->
     _queue arr[1..], iterator, callback
 
 resolveFiles = (urls, cb) ->
-  cb urls
+  files = {}
+  _queue urls, ([name, url], cb) ->
+    buffers = []
+    r = request url
+    r.on "data", (data) -> buffers.push data
+    r.on "end", ->
+      files[name] = Buffer.concat buffers
+      cb()
+  , -> cb files
 
 ls = (param) ->
   throw "Diff not implemented"
@@ -24,9 +34,15 @@ pull = (names) ->
       if exists
         fs.readFile filename, (err, data) ->
           throw err if err
-          module = coffee.eval data.toString('utf8'), sandbox: loadjs: root
-          module.getLatest (files) ->
-            console.log files
+          asset = coffee.eval data.toString('utf8'), sandbox: 
+            loadjs: root
+            console: console
+          asset.getLatest (files) ->
+            for own file, data of files
+              do (file,data) -> 
+                fs.writeFile file, data, (err) ->
+                  throw err if err
+                  console.log "Loaded file #{file}"
       else
         console.log "No package #{name} found."
       
