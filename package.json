@@ -15,7 +15,8 @@
     "coffee-script": ">=1.1.1",
     "request": ">=2.1.0",
     "zip": ">=0.0.0",
-    "bufferjs": ">=1.0.2"
+    "bufferjs": ">=1.0.2",
+    "async": ">=0.1.10"
   }
 , "devDependencies":
   { "nodeunit": ">=0.5.0"

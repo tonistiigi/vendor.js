@@ -3,15 +3,11 @@ path = require "path"
 coffee = require "coffee-script"
 request = require "request"
 require "bufferjs"
-
-_queue = (arr, iterator, callback) ->
-  return callback() unless arr.length
-  iterator arr[0], ->
-    _queue arr[1..], iterator, callback
+async = require "async"
 
 resolveFiles = (urls, cb) ->
   files = {}
-  _queue urls, ([name, url], cb) ->
+  async.forEach urls, ([name, url], cb) ->
     buffers = []
     r = request url
     r.on "data", (data) -> buffers.push data
