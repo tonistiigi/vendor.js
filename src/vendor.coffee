@@ -79,16 +79,19 @@ _status = (param, cb) ->
 
 status = (param) ->
   _status param, (results) ->
-    console.log JSON.stringify results
+    for {name,files} in results
+      console.log name.bold,
+        if (_.all files, ({changed}) -> not changed) then "CURRENT".bold.green else "UPGRADE".bold.red,
+        (_.map files, ({changed,name}) -> if changed then name.red else name).join ","
     
 pull = (names) ->
   throw "You have to specify a name for pull command." unless names.length
   for name in names
     _get_remote name, (files) ->
       _.each files, ([file, data]) -> 
-          fs.writeFile file, data, (err) ->
-            throw err if err
-            console.log "Loaded file #{file}"
+        fs.writeFile file, data, (err) ->
+          throw err if err
+          console.log "Loaded file #{file}"
 
       
 diff = (param) ->

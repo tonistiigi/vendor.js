@@ -16,7 +16,7 @@ getZepto = (cb) ->
       reader = zip.Reader Buffer.concat buffers
       files = reader.toObject 'utf-8'
       for own k,v of files
-        return cb v if k.match /dist\/zepto.js$/
+        return cb new Buffer(v) if k.match /dist\/zepto.js$/
       
 zepto =
   getLatest : (cb) ->
