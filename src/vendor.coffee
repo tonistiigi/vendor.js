@@ -6,6 +6,7 @@ require "bufferjs"
 async = require "async"
 {_} = require "underscore"
 require "colors"
+nodediff = require "diff"
 
 resolveFiles = (urls, cb) ->
   files = []
@@ -29,8 +30,6 @@ _ls = (param, cb) ->
         results.push name: register, files: _.filter files[1], isvalid
     cb results
 
-
-        
 ls = (param) ->
   _ls param, (results) ->
     for {name, files} in results
@@ -63,13 +62,13 @@ _status = (param, cb) ->
       results.push name: name, files: fdata
       _get_remote name, (files) ->
         async.forEach files, ([fname, data], cb) ->
-          res = name: fname, remotedata: data.length, localdata: [], changed: true
+          res = name: fname, remotedata: data, localdata: [], changed: true
           fdata.push res
           path.exists fname, (exists) ->
             return cb() unless exists
             fs.readFile fname, (err, localdata) ->
               return cb() if err
-              res.localdata = localdata.length
+              res.localdata = localdata
               res.changed = false if _buffers_equal data, localdata
               cb()
         ,
@@ -94,8 +93,13 @@ pull = (names) ->
           console.log "Loaded file #{file}"
 
       
-diff = (param) ->
-  throw "diff not implemented"
+diff = (names) ->
+  throw "You have to specify a name for diff command." unless names.length
+  _status names, (results) ->
+    for {files} in results
+      for {localdata, remotedata, changed, name} in files
+        continue unless changed
+        console.log nodediff.createPatch name, localdata.toString('utf8'), remotedata.toString('utf8'), 'local', 'remote'
 
 run = (opts) ->
   [cmd, param...] = opts
