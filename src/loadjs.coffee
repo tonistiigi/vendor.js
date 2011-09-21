@@ -36,28 +36,60 @@ ls = (param) ->
     for {name, files} in results
       console.log "#{name.bold}: #{files}"
 
-status = (param) ->
-  throw "status not implemented"
+_get_remote = (name, cb) ->
+  filename = path.resolve __dirname, "../register/#{name}.coffee"
+  path.exists filename, (exists) ->
+    if exists
+      fs.readFile filename, (err, data) ->
+        throw err if err
+        asset = coffee.eval data.toString('utf8'), sandbox: 
+          loadjs: root
+          console: console
+        asset.getLatest cb
+    else
+      console.log "No package #{name} found."
 
+_buffers_equal = (b1, b2) ->
+  return false if b1.length != b2.length
+  for b, i in b1
+    return false if b != b2[i]
+  true
+
+_status = (param, cb) ->
+  results = []
+  _ls param, (list) ->
+    async.forEach list, ({name, files}, cb) ->
+      fdata = []
+      results.push name: name, files: fdata
+      _get_remote name, (files) ->
+        async.forEach files, ([fname, data], cb) ->
+          res = name: fname, remotedata: data.length, localdata: [], changed: true
+          fdata.push res
+          path.exists fname, (exists) ->
+            return cb() unless exists
+            fs.readFile fname, (err, localdata) ->
+              return cb() if err
+              res.localdata = localdata.length
+              res.changed = false if _buffers_equal data, localdata
+              cb()
+        ,
+        -> cb()
+    , 
+    -> cb results
+
+status = (param) ->
+  _status param, (results) ->
+    console.log JSON.stringify results
+    
 pull = (names) ->
   throw "You have to specify a name for pull command." unless names.length
   for name in names
-    filename = path.resolve __dirname, "../register/#{name}.coffee"
-    path.exists filename, (exists) ->
-      if exists
-        fs.readFile filename, (err, data) ->
-          throw err if err
-          asset = coffee.eval data.toString('utf8'), sandbox: 
-            loadjs: root
-            console: console
-          asset.getLatest (files) ->
-            for own file, data of files
-              do (file,data) -> 
-                fs.writeFile file, data, (err) ->
-                  throw err if err
-                  console.log "Loaded file #{file}"
-      else
-        console.log "No package #{name} found."
+    _get_remote name, (files) ->
+      _.each files, ([file, data]) -> 
+          fs.writeFile file, data, (err) ->
+            throw err if err
+            console.log "Loaded file #{file}"
+
       
 diff = (param) ->
   throw "diff not implemented"
