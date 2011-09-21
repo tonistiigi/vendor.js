@@ -43,7 +43,7 @@ _get_remote = (name, cb) ->
       fs.readFile filename, (err, data) ->
         throw err if err
         asset = coffee.eval data.toString('utf8'), sandbox: 
-          loadjs: root
+          resolveFiles: resolveFiles
           console: console
         asset.getLatest cb
     else
@@ -112,10 +112,10 @@ run = (opts) ->
 
 help = (e) -> console.log """
   Usage: 
-    loadjs ls [name]      - list assets loaded in current dir
-    loadjs pull name      - download asset
-    loadjs status [name]  - check if there are updates
-    loadjs diff name      - diff current version with latest possible
+    vendor ls [name]      - list assets loaded in current dir
+    vendor pull name      - download asset
+    vendor status [name]  - check if there are updates
+    vendor diff name      - diff current version with latest possible
   """
 
 root = module.exports =

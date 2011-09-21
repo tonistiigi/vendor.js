@@ -1,6 +1,6 @@
 
 jquery =
   getLatest : (cb) ->
-    loadjs.resolveFiles [
+    resolveFiles [
       ["jquery.js", "http://code.jquery.com/jquery.js"]
       ], cb
