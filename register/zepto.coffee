@@ -21,4 +21,4 @@ getZepto = (cb) ->
 zepto =
   getLatest : (cb) ->
     getZepto (data) ->
-      cb "zepto.js":data
+      cb [["zepto.js",data]]

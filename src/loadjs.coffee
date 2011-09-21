@@ -5,34 +5,36 @@ request = require "request"
 require "bufferjs"
 async = require "async"
 {_} = require "underscore"
+require "colors"
 
 resolveFiles = (urls, cb) ->
-  files = {}
+  files = []
   async.forEach urls, ([name, url], cb) ->
     buffers = []
     r = request url
     r.on "data", (data) -> buffers.push data
     r.on "end", ->
-      files[name] = Buffer.concat buffers
+      files.push [name, Buffer.concat buffers]
       cb()
   , -> cb files
 
 _ls = (param, cb) ->
   async.map [(path.resolve __dirname, "../register/"), "."], fs.readdir, (err, files) ->
-    result = {}
+    results = []
     for register in files[0]
       register = register.replace /\.coffee$/, ""
       continue if param.length and register not in param
       isvalid = (name) -> name.match new RegExp "^#{register}\.", "i"
       if _.any files[1], isvalid
-        result[register] = _.filter files[1], isvalid
-    cb result
+        results.push name: register, files: _.filter files[1], isvalid
+    cb results
+
+
         
 ls = (param) ->
-  _ls param, (result) ->
-    for own name, files of result
-      console.log "#{name}: #{files}"
-      
+  _ls param, (results) ->
+    for {name, files} in results
+      console.log "#{name.bold}: #{files}"
 
 status = (param) ->
   throw "status not implemented"
