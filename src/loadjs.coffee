@@ -4,6 +4,7 @@ coffee = require "coffee-script"
 request = require "request"
 require "bufferjs"
 async = require "async"
+{_} = require "underscore"
 
 resolveFiles = (urls, cb) ->
   files = {}
@@ -16,8 +17,22 @@ resolveFiles = (urls, cb) ->
       cb()
   , -> cb files
 
+_ls = (param, cb) ->
+  async.map [(path.resolve __dirname, "../register/"), "."], fs.readdir, (err, files) ->
+    result = {}
+    for register in files[0]
+      register = register.replace /\.coffee$/, ""
+      continue if param.length and register not in param
+      isvalid = (name) -> name.match new RegExp "^#{register}\.", "i"
+      if _.any files[1], isvalid
+        result[register] = _.filter files[1], isvalid
+    cb result
+        
 ls = (param) ->
-  throw "Diff not implemented"
+  _ls param, (result) ->
+    for own name, files of result
+      console.log "#{name}: #{files}"
+      
 
 status = (param) ->
   throw "status not implemented"
