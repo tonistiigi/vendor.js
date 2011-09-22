@@ -106,7 +106,7 @@ diff = (names) ->
 
 run = (opts) ->
   [cmd, names...] = opts
-  names = _.map names, (name) -> name.replace /\..+$/ ""
+  names = _.map names, (name) -> name.replace /\..+$/, ""
   try 
     
     switch cmd
