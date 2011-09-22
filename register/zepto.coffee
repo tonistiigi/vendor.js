@@ -1,8 +1,5 @@
-request = require "request"
 fs = require "fs"
-zip = require "zip"
 {Buffer} = require "buffer"
-require "bufferjs"
 
 getZepto = (cb) -> 
   request "http://zeptojs.com/", (err, resp, body) ->

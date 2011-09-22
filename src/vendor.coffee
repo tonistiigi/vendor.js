@@ -6,6 +6,7 @@ require "bufferjs"
 async = require "async"
 {_} = require "underscore"
 require "colors"
+zip = require "zip"
 nodediff = require "diff"
 
 resolveFiles = (urls, cb) ->
@@ -43,6 +44,8 @@ _get_remote = (name, cb) ->
         throw err if err
         asset = coffee.eval data.toString('utf8'), sandbox: 
           resolveFiles: resolveFiles
+          request: request
+          zip: zip
           console: console
         asset.getLatest cb
     else

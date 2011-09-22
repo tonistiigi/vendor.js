@@ -1,4 +1,3 @@
-request = require "request"
 
 resolvePrototype = (cb) -> 
   request "http://www.prototypejs.org/download", (err, resp, body) ->
