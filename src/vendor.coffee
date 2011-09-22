@@ -57,9 +57,9 @@ _buffers_equal = (b1, b2) ->
     return false if b != b2[i]
   true
 
-_status = (param, cb) ->
+_status = (names, cb) ->
   results = []
-  _ls param, (list) ->
+  _ls names, (list) ->
     async.forEach list, ({name, files}, cb) ->
       fdata = []
       results.push name: name, files: fdata
@@ -79,8 +79,8 @@ _status = (param, cb) ->
     , 
     -> cb results
 
-status = (param) ->
-  _status param, (results) ->
+status = (names) ->
+  _status names, (results) ->
     for {name,files} in results
       console.log name.bold,
         if (_.all files, ({changed}) -> not changed) then "CURRENT".bold.green else "UPGRADE".bold.red,
@@ -105,14 +105,15 @@ diff = (names) ->
         console.log nodediff.createPatch name, localdata.toString('utf8'), remotedata.toString('utf8'), 'local', 'remote'
 
 run = (opts) ->
-  [cmd, param...] = opts
+  [cmd, names...] = opts
+  names = _.map names, (name) -> name.replace /\..+$/ ""
   try 
-  
+    
     switch cmd
-      when "ls" then ls param
-      when "pull", "get", "update" then pull param
-      when "status", "check" then status param
-      when "diff" then diff param
+      when "ls" then ls names
+      when "pull", "get", "update" then pull names
+      when "status", "check" then status names
+      when "diff" then diff names
       when cmd then throw "No such command #{cmd}"
       else help() 
       
