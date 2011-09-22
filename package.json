@@ -1,7 +1,7 @@
 { "name": "vendor.js"
 , "description": "Simple Javascript assets downloader"
 , "author": "Tõnis Tiigi <tonistiigi@gmail.com>"
-, "version": "0.0.0"
+, "version": "0.0.1"
 , "licenses": [
   { "type": "MIT"
   }]
@@ -9,7 +9,10 @@
   { "type": "git"
   , "url": "https://github.com/tonistiigi/vendor.js.git"
   }
-, "lib": "./lib/"
+, "directories" : {
+  "lib": "./lib/"
+}
+, "main": "./lib/vendor.js"
 , "dependencies":
   {
     "coffee-script": ">=1.1.1",
