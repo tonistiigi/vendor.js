@@ -114,8 +114,9 @@ run = (opts) ->
       when "pull", "get", "update" then pull names
       when "status", "check" then status names
       when "diff" then diff names
-      when cmd then throw "No such command #{cmd}"
-      else help() 
+      else
+       throw "No such command #{cmd}" if cmd
+       help() 
       
   catch e
     console.log "Error: #{e}"
