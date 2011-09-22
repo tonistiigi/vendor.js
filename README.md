@@ -1,5 +1,10 @@
 Vendor.js is a simple collection of links to the browser versions of popular JavaScript libraries. It allows one to quickly **download** the library, **check** if it has been updated and **compare** local version with the latest one found in the internet.
 
+###Installation:
+
+    npm install -g vendor.js
+
+
 ###Usage: 
 
 ####Downloading/updating packages
