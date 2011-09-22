@@ -121,7 +121,7 @@ run = (opts) ->
     console.log "Error: #{e}"
     help()
 
-help = (e) -> console.log """
+help = -> console.log """
   Usage: 
     vendor ls [name]      - list assets loaded in current dir
     vendor pull name      - download asset
@@ -129,7 +129,10 @@ help = (e) -> console.log """
     vendor diff name      - diff current version with latest possible
   """
 
-root = module.exports =
-  run : run
-  help : help
-  resolveFiles : resolveFiles
+module.exports =
+  run     : run
+  help    : help
+  ls      : _ls
+  status  : _status
+  pull    : pull
+  diff    : diff
