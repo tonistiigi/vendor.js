@@ -107,8 +107,8 @@ run = (opts) ->
   
     switch cmd
       when "ls" then ls param
-      when "pull" then pull param
-      when "status" then status param
+      when "pull", "get", "update" then pull param
+      when "status", "check" then status param
       when "diff" then diff param
       when cmd then throw "No such command #{cmd}"
       else help() 
