@@ -1,7 +1,7 @@
 { "name": "vendor.js"
 , "description": "Simple Javascript assets downloader"
 , "author": "Tõnis Tiigi <tonistiigi@gmail.com>"
-, "version": "0.0.2"
+, "version": "0.0.3"
 , "licenses": [
   { "type": "MIT"
   }]
